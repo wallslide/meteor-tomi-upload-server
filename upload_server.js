@@ -233,55 +233,55 @@ UploadHandler.prototype.post = function () {
     }
     this.formFields[name] = value;
   }).on('file', function (name, file) {
-    var fileInfo = map[path.basename(file.path)];
-    fileInfo.size = file.size;
-    if (!fileInfo.validate()) {
-      fs.unlink(file.path);
-      return;
-    }
-
-    // we can store files in subdirectories
-    var folder = options.getDirectory(fileInfo.name, this.formFields);
-    // check if directory exists, if not, create all the directories
-    var subFolders = folder.split('/');
-    var currentFolder = options.uploadDir;
-    for (var i = 0; i < subFolders.length; i++) {
-      currentFolder += '/' + subFolders[i];
-
-      if (!fs.existsSync(currentFolder)) {
-        fs.mkdirSync(currentFolder);
-      }
-    }
-
-    // possibly rename file if needed;
-    var newFileName = options.getFileName(fileInfo.name, this.formFields);
-
-    // set the file name
-    fileInfo.path = folder + "/" + newFileName;
-
-    fs.renameSync(file.path, currentFolder + "/" + newFileName);
-
-    if (options.imageTypes.test(fileInfo.name)) {
-      Object.keys(options.imageVersions).forEach(function (version) {
-        counter += 1;
-        var opts = options.imageVersions[version];
-
-        // check if version directory exists
-        if (!fs.existsSync(currentFolder + '/' + version)) {
-          fs.mkdirSync(currentFolder + '/' + version);
-        }
-
-        imageMagick.resize({
-          width: opts.width,
-          height: opts.height,
-          srcPath: currentFolder + '/' + newFileName,
-          dstPath: currentFolder + '/' + version + '/' + newFileName
-        }, finish);
-      });
-    }
-
-    // call the feedback
-    options.finished(newFileName, folder, this.formFields);
+    //var fileInfo = map[path.basename(file.path)];
+    //fileInfo.size = file.size;
+    //if (!fileInfo.validate()) {
+    //  fs.unlink(file.path);
+    //  return;
+    //}
+    //
+    //// we can store files in subdirectories
+    //var folder = options.getDirectory(fileInfo.name, this.formFields);
+    //// check if directory exists, if not, create all the directories
+    //var subFolders = folder.split('/');
+    //var currentFolder = options.uploadDir;
+    //for (var i = 0; i < subFolders.length; i++) {
+    //  currentFolder += '/' + subFolders[i];
+    //
+    //  if (!fs.existsSync(currentFolder)) {
+    //    fs.mkdirSync(currentFolder);
+    //  }
+    //}
+    //
+    //// possibly rename file if needed;
+    //var newFileName = options.getFileName(fileInfo.name, this.formFields);
+    //
+    //// set the file name
+    //fileInfo.path = folder + "/" + newFileName;
+    //
+    //fs.renameSync(file.path, currentFolder + "/" + newFileName);
+    //
+    //if (options.imageTypes.test(fileInfo.name)) {
+    //  Object.keys(options.imageVersions).forEach(function (version) {
+    //    counter += 1;
+    //    var opts = options.imageVersions[version];
+    //
+    //    // check if version directory exists
+    //    if (!fs.existsSync(currentFolder + '/' + version)) {
+    //      fs.mkdirSync(currentFolder + '/' + version);
+    //    }
+    //
+    //    imageMagick.resize({
+    //      width: opts.width,
+    //      height: opts.height,
+    //      srcPath: currentFolder + '/' + newFileName,
+    //      dstPath: currentFolder + '/' + version + '/' + newFileName
+    //    }, finish);
+    //  });
+    //}
+    //
+    //// call the feedback
+    options.finished(file, this.formFields);
   }).on('aborted', function () {
     tmpFiles.forEach(function (file) {
       fs.unlink(file);
